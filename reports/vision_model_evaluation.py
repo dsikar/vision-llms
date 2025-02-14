@@ -5,21 +5,38 @@ import os
 
 def analyze_results(true_labels, predicted_labels):
     """Simple analysis of classification results."""
-    total_samples = len(true_labels)
     
+    # sanity checks
+    # Find distinct values in each list
+    true_distinct = set(true_labels)
+    predicted_distinct = set(predicted_labels)
+
+    # Print the distinct values
+    print("Distinct values in true_labels:", true_distinct)
+    print("Distinct values in predicted_labels:", predicted_distinct)
+
+    total_samples = len(true_labels)
+    print("total_samples: {}".format(total_samples))    
     # Count unknown predictions (class 10)
     unknown_count = np.sum(predicted_labels == 10)
     unknown_percentage = (unknown_count / total_samples) * 100
-    
+    print("unknown_count: {}, unknown_percentage: {}".format(unknown_count, unknown_percentage)) 
     # Calculate accuracy excluding unknown predictions
     valid_mask = predicted_labels != 10
     valid_predictions = predicted_labels[valid_mask]
     valid_true = true_labels[valid_mask]
-    
-    if len(valid_predictions) > 0:
-        overall_accuracy = np.mean(valid_predictions == valid_true)
+    print("np.sum(valid_mask): {}".format(np.sum(valid_mask)))    
+    # Calculate accuracy excluding unknown predictions
+    valid_mask = predicted_labels != 10
+    if np.any(valid_mask):
+        overall_accuracy = np.mean(predicted_labels[valid_mask] == true_labels[valid_mask])
     else:
         overall_accuracy = 0.0
+
+    #if len(valid_predictions) > 0:
+    #    overall_accuracy = np.mean(valid_predictions == valid_true)
+    #else:
+    #    overall_accuracy = 0.0
 
     print("\nClassification Analysis")
     print("=" * 40)
