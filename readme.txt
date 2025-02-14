@@ -1,0 +1,2 @@
+flight start
+. ~/.bashrc
