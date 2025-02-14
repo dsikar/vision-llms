@@ -66,12 +66,25 @@ def extract_digit(response, debug=False):
             print(f"Error extracting digit: {str(e)}")
         return 10
 
+from datetime import datetime
+
+def save_results(results_dict, save_path, set_type, timestamp):
+    """Save results to file with consistent timestamp."""
+    save_file = os.path.join(
+        save_path,
+        f'mnist_{set_type}_Llama-3.2-90B-Vision-Instruct_{timestamp}.npy'
+    )
+    np.save(save_file, results_dict)
+
 def process_dataset(dataset, model, processor, set_type, debug=False):
     """Process either training or testing dataset."""
-    true_labels = []
-    predicted_labels = []
-    total_images = len(dataset)
+    results = {
+        'true_labels': [],
+        'predicted_labels': [],
+        'timestamp': datetime.now().strftime("%Y%m%d_%H%M%S")
+    }
     
+    total_images = len(dataset)
     print(f"Processing {set_type} dataset ({total_images} images)...")
     
     for idx in range(total_images):
@@ -112,31 +125,29 @@ def process_dataset(dataset, model, processor, set_type, debug=False):
                 print("="*50 + "\n")
                 input("Press Enter to continue...")
             
-            true_labels.append(label)
-            predicted_labels.append(predicted_digit)
+            results['true_labels'].append(label)
+            results['predicted_labels'].append(predicted_digit)
             
         except Exception as e:
             print(f"Error processing image {idx}: {str(e)}")
-            true_labels.append(label)
-            predicted_labels.append(10)
+            results['true_labels'].append(label)
+            results['predicted_labels'].append(10)
             
         # Save results periodically
         if idx % 1000 == 0:
-            np.save(
-                os.path.join(RESULTS_PATH, f'mnist_{set_type}_iteration_Llama-3.2-90B-Vision-Instruct.npy'),
-                {'true_labels': true_labels, 'predicted_labels': predicted_labels}
-            )
+            save_results(results, RESULTS_PATH, f"{set_type}_iteration", results['timestamp'])
     
     # Save final results
-    np.save(
-        os.path.join(RESULTS_PATH, f'mnist_{set_type}_iteration_Llama-3.2-90B-Vision-Instruct.npy'),
-        {'true_labels': true_labels, 'predicted_labels': predicted_labels}
-    )
+    save_results(results, RESULTS_PATH, set_type, results['timestamp'])
     
-    return true_labels, predicted_labels
+    return results['true_labels'], results['predicted_labels']
 
 def main():
     args = setup_argparse()
+    
+    # Create necessary directories
+    for path in [MNIST_PATH, RESULTS_PATH, RAW_PATH]:
+        os.makedirs(path, exist_ok=True)
     
     # Setup model and processor
     model, processor = setup_model()
@@ -149,6 +160,9 @@ def main():
     # Process datasets
     if args.debug:
         print("Running in debug mode - will show detailed output for each prediction")
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"Starting processing with timestamp: {timestamp}")
     
     # Process training dataset
     train_true, train_pred = process_dataset(train_dataset, model, processor, 'training', args.debug)
