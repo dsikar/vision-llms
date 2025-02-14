@@ -46,27 +46,29 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
     print(f"Distinct values in predicted_labels: {predicted_distinct}")
     
     total_samples = len(true_labels)
-    print(f"total_samples: {total_samples}")
-    
     unknown_count = np.sum(predicted_labels == 10)
     unknown_percentage = (unknown_count / total_samples) * 100
-    print(f"unknown_count: {unknown_count}, unknown_percentage: {unknown_percentage}")
-    
     valid_mask = predicted_labels != 10
-    print(f"np.sum(valid_mask): {np.sum(valid_mask)}")
     
-    if np.any(valid_mask):
-        overall_accuracy = np.mean(predicted_labels[valid_mask] == true_labels[valid_mask])
+    # Overall statistics
+    valid_predictions = np.sum(valid_mask)
+    if valid_predictions > 0:
+        correct_predictions = np.sum(np.logical_and(predicted_labels == true_labels, valid_mask))
+        overall_accuracy = correct_predictions / total_samples
+        accuracy_when_predicted = correct_predictions / valid_predictions
     else:
         overall_accuracy = 0.0
+        accuracy_when_predicted = 0.0
 
     print(f"\n{dataset_name} Classification Analysis")
-    print("=" * 40)
+    print("=" * 60)
     print(f"Total examples: {total_samples}")
-    print(f"Unknown predictions (class 10): {unknown_count} ({unknown_percentage:.2f}%)")
-    print(f"Overall accuracy (excluding unknown): {overall_accuracy:.4f}")
+    print(f"Overall success rate: {overall_accuracy:.2%} ({correct_predictions}/{total_samples})")
+    print(f"Prediction rate: {valid_predictions/total_samples:.2%} ({valid_predictions}/{total_samples})")
+    print(f"Accuracy when predicted: {accuracy_when_predicted:.2%} ({correct_predictions}/{valid_predictions})")
+    print(f"Unknown predictions: {unknown_percentage:.1f}% ({unknown_count}/{total_samples})")
     
-    print("\nPer-class Accuracy:")
+    print("\nPer-class Statistics:")
     print("-" * 60)
     for i in range(10):
         class_mask = true_labels == i
@@ -74,15 +76,18 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
         
         if class_total > 0:
             class_valid = np.logical_and(class_mask, valid_mask)
-            class_valid_count = np.sum(class_valid)
-            class_unknown = np.sum(np.logical_and(class_mask, predicted_labels == 10))
+            valid_count = np.sum(class_valid)
+            unknown_count = class_total - valid_count
+            correct_count = np.sum(np.logical_and(class_valid, predicted_labels == i))
             
-            if class_valid_count > 0:
-                class_acc = np.mean(predicted_labels[class_valid] == i)
-            else:
-                class_acc = 0.0
-                
-            print(f"{class_names[i]:>12}: {class_acc:.4f} (Unknown: {class_unknown}/{class_total})")
+            overall_success_rate = correct_count / class_total
+            prediction_rate = valid_count / class_total
+            accuracy_when_predicted = correct_count / valid_count if valid_count > 0 else 0.0
+            unknown_rate = unknown_count / class_total
+            
+            print(f"{class_names[i]:>12}: {overall_success_rate:.1%} overall ({correct_count}/{class_total}), "
+                  f"{accuracy_when_predicted:.1%} when predicted ({correct_count}/{valid_count}), "
+                  f"{unknown_rate:.1%} unknown ({unknown_count}/{class_total})")
 
 def main():
     parser = argparse.ArgumentParser(description='Analyze classification results.')
