@@ -66,16 +66,18 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
     
     # Basic statistics
     total_samples = len(true_labels)
-    valid_predictions = predicted_labels != unknown_class
-    unknown_predictions = predicted_labels == unknown_class
+    valid_predictions_mask = predicted_labels != unknown_class
+    valid_predictions = np.sum(valid_predictions_mask)
+    unknown_predictions = np.sum(predicted_labels == unknown_class)
     
     # Count unknown predictions
-    total_unknown = np.sum(unknown_predictions)
-    unknown_percentage = (total_unknown / total_samples) * 100
+    unknown_percentage = (unknown_predictions / total_samples) * 100
     
-    # Calculate accuracy only if there are valid predictions
-    if np.any(valid_predictions):
-        accuracy = np.mean(np.logical_and(true_labels == predicted_labels, valid_predictions))
+    # Calculate accuracy for valid predictions
+    if valid_predictions > 0:
+        valid_matches = np.sum(np.logical_and(true_labels == predicted_labels, 
+                                            valid_predictions_mask))
+        accuracy = valid_matches / valid_predictions
     else:
         accuracy = 0.0
     
@@ -86,11 +88,14 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
         class_total = np.sum(mask)
         
         if class_total > 0:
-            class_valid = predicted_labels[mask] != unknown_class
-            class_unknown = np.sum(predicted_labels[mask] == unknown_class)
+            class_valid_mask = np.logical_and(mask, valid_predictions_mask)
+            class_valid = np.sum(class_valid_mask)
+            class_unknown = np.sum(np.logical_and(mask, predicted_labels == unknown_class))
             
-            if np.any(class_valid):
-                class_acc = np.mean(predicted_labels[mask][class_valid] == i)
+            if class_valid > 0:
+                class_correct = np.sum(np.logical_and(class_valid_mask, 
+                                                    predicted_labels == i))
+                class_acc = class_correct / class_valid
             else:
                 class_acc = 0.0
                 
@@ -99,41 +104,45 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
                 'accuracy': class_acc,
                 'unknown': class_unknown,
                 'unknown_percent': unknown_percent,
-                'total': class_total
+                'total': class_total,
+                'valid': class_valid
             })
         else:
             class_stats.append({
                 'accuracy': 0.0,
                 'unknown': 0,
                 'unknown_percent': 0.0,
-                'total': 0
+                'total': 0,
+                'valid': 0
             })
     
     # Print results
     print(f"\n{dataset_name} Classification Analysis")
     print("=" * 40)
     print(f"Total examples: {total_samples}")
-    print(f"Unknown/Error predictions: {total_unknown} ({unknown_percentage:.2f}%)")
-    print(f"Overall accuracy (excluding unknown): {accuracy:.4f}")
+    print(f"Unknown/Error predictions: {unknown_predictions} ({unknown_percentage:.2f}%)")
+    if valid_predictions > 0:
+        print(f"Overall accuracy (excluding unknown): {accuracy:.4f}")
+    else:
+        print("Overall accuracy: N/A (no valid predictions)")
     
     print("\nPer-class Statistics:")
     print("-" * 60)
     print(f"{'Class':>8} | {'Total':>5} | {'Valid':>5} | {'Unknown':>8} | {'Unk %':>6} | {'Acc':>6}")
     print("-" * 60)
     for i, stats in enumerate(class_stats):
-        valid = stats['total'] - stats['unknown']
-        print(f"{class_names[i]:>8} | {stats['total']:>5} | {valid:>5} | {stats['unknown']:>8} | "
-              f"{stats['unknown_percent']:>6.2f} | {stats['accuracy']:>6.4f}")
+        print(f"{class_names[i]:>8} | {stats['total']:>5} | {stats['valid']:>5} | "
+              f"{stats['unknown']:>8} | {stats['unknown_percent']:>6.2f} | "
+              f"{stats['accuracy']:>6.4f}")
     
-    # Only print confusion matrix if there are valid predictions
-    if np.any(valid_predictions):
-        valid_true = true_labels[valid_predictions]
-        valid_pred = predicted_labels[valid_predictions]
-        if len(valid_true) > 0:
-            print("\nConfusion Matrix (excluding unknown predictions):")
-            print("-" * 40)
-            conf_mat = confusion_matrix(valid_true, valid_pred, labels=range(num_classes))
-            print_confusion_matrix(conf_mat, class_names)
+    # Create confusion matrix only if there are valid predictions
+    if valid_predictions > 0:
+        print("\nConfusion Matrix (excluding unknown predictions):")
+        print("-" * 40)
+        true_valid = true_labels[valid_predictions_mask]
+        pred_valid = predicted_labels[valid_predictions_mask]
+        conf_mat = confusion_matrix(true_valid, pred_valid, labels=range(num_classes))
+        print_confusion_matrix(conf_mat, class_names)
     else:
         print("\nNo valid predictions to create confusion matrix.")
 
