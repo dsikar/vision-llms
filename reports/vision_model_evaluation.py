@@ -28,6 +28,33 @@ def infer_dataset(filepath):
     else:
         raise ValueError("Could not infer dataset type from filepath. Please ensure 'mnist' or 'cifar10' is in the path.")
 
+def print_confusion_matrix(true_labels, pred_labels, class_names):
+    """Print confusion matrix for valid predictions."""
+    # Create matrix
+    n_classes = len(class_names)
+    conf_matrix = np.zeros((n_classes, n_classes), dtype=int)
+    
+    # Fill matrix
+    for t, p in zip(true_labels, pred_labels):
+        conf_matrix[t][p] += 1
+    
+    # Print matrix
+    print("\nConfusion Matrix (excluding unknown predictions):")
+    print("-" * 60)
+    
+    # Header
+    print("True\\Pred |", end="")
+    for name in class_names:
+        print(f" {name:>4} |", end="")
+    print("\n" + "-" * (9 + 7*len(class_names)))
+    
+    # Rows
+    for i in range(n_classes):
+        print(f"{class_names[i]:>8} |", end="")
+        for j in range(n_classes):
+            print(f" {conf_matrix[i][j]:>4} |", end="")
+        print()
+
 def analyze_results(true_labels, predicted_labels, dataset_config):
     """Simple analysis of classification results."""
     
@@ -88,6 +115,12 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
             print(f"{class_names[i]:>12}: {overall_success_rate:.1%} overall ({correct_count}/{class_total}), "
                   f"{accuracy_when_predicted:.1%} when predicted ({correct_count}/{valid_count}), "
                   f"{unknown_rate:.1%} unknown ({unknown_count}/{class_total})")
+    
+    # Print confusion matrix for valid predictions only
+    if np.any(valid_mask):
+        true_valid = true_labels[valid_mask]
+        pred_valid = predicted_labels[valid_mask]
+        print_confusion_matrix(true_valid, pred_valid, class_names)
 
 def main():
     parser = argparse.ArgumentParser(description='Analyze classification results.')
