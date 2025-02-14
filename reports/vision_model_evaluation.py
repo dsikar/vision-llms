@@ -9,13 +9,15 @@ DATASET_CONFIGS = {
     'mnist': {
         'num_classes': 10,
         'class_names': [str(i) for i in range(10)],
-        'name': 'MNIST'
+        'name': 'MNIST',
+        'unknown_class': 10
     },
     'cifar10': {
         'num_classes': 10,
         'class_names': ['airplane', 'automobile', 'bird', 'cat', 'deer', 
                        'dog', 'frog', 'horse', 'ship', 'truck'],
-        'name': 'CIFAR-10'
+        'name': 'CIFAR-10',
+        'unknown_class': 10
     }
 }
 
@@ -60,37 +62,53 @@ def analyze_results(true_labels, predicted_labels, dataset_config):
     num_classes = dataset_config['num_classes']
     class_names = dataset_config['class_names']
     dataset_name = dataset_config['name']
+    unknown_class = dataset_config['unknown_class']
     
     # Basic statistics
     total_samples = len(true_labels)
-    accuracy = np.mean(true_labels == predicted_labels)
+    valid_predictions = predicted_labels != unknown_class
+    unknown_predictions = predicted_labels == unknown_class
+    accuracy = np.mean(np.logical_and(true_labels == predicted_labels, valid_predictions))
     
-    # Per-class accuracy
+    # Count unknown predictions
+    total_unknown = np.sum(unknown_predictions)
+    unknown_percentage = (total_unknown / total_samples) * 100
+    
+    # Per-class accuracy and unknown predictions
     class_accuracies = []
+    unknown_per_class = []
     for i in range(num_classes):
         mask = true_labels == i
         if np.sum(mask) > 0:
-            class_acc = np.mean(predicted_labels[mask] == i)
+            class_acc = np.mean(predicted_labels[mask][predicted_labels[mask] != unknown_class] == i)
+            unknown_count = np.sum(predicted_labels[mask] == unknown_class)
             class_accuracies.append(class_acc)
+            unknown_per_class.append(unknown_count)
         else:
             class_accuracies.append(0.0)
+            unknown_per_class.append(0)
     
-    # Compute confusion matrix
-    conf_mat = confusion_matrix(true_labels, predicted_labels, 
+    # Compute confusion matrix for valid predictions
+    valid_true = true_labels[valid_predictions]
+    valid_pred = predicted_labels[valid_predictions]
+    conf_mat = confusion_matrix(valid_true, valid_pred, 
                               labels=range(num_classes))
     
     # Print results
     print(f"\n{dataset_name} Classification Analysis")
     print("=" * 40)
     print(f"Total examples: {total_samples}")
-    print(f"Overall accuracy: {accuracy:.4f}")
+    print(f"Unknown/Error predictions: {total_unknown} ({unknown_percentage:.2f}%)")
+    print(f"Overall accuracy (excluding unknown): {accuracy:.4f}")
     
-    print("\nPer-class Accuracy:")
+    print("\nPer-class Statistics:")
     print("-" * 40)
-    for i, (name, acc) in enumerate(zip(class_names, class_accuracies)):
-        print(f"{name:>12}: {acc:.4f}")
+    for i, (name, acc, unk) in enumerate(zip(class_names, class_accuracies, unknown_per_class)):
+        total_class = np.sum(true_labels == i)
+        unk_percent = (unk / total_class * 100) if total_class > 0 else 0
+        print(f"{name:>12}: Acc = {acc:.4f}, Unknown = {unk} ({unk_percent:.2f}%)")
     
-    print("\nConfusion Matrix:")
+    print("\nConfusion Matrix (excluding unknown predictions):")
     print("-" * 40)
     print_confusion_matrix(conf_mat, class_names)
 
