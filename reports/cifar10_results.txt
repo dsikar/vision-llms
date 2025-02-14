@@ -1,0 +1,938 @@
+Found 13 result files
+
+Analyzing: cifar10_training_Llama-3.2-11B-Vision-Instruct_20250214_111757.npy
+Timestamp: 20250214_111757
+Total samples: 100
+Overall accuracy: 0.8600
+Unparseable predictions: 1 (1.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 6
+  Accuracy: 0.8333
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 16
+  Accuracy: 0.9375
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 13
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 13
+  Accuracy: 0.7692
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 11
+  Accuracy: 0.9091
+  Unparseable: 1 (9.09%)
+
+Dog (class 5):
+  Samples: 7
+  Accuracy: 0.8571
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 7
+  Accuracy: 0.4286
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 11
+  Accuracy: 0.9091
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 4
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 12
+  Accuracy: 0.8333
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	1.0000		0.8333		0.9091		6
+automobile  	0.8333		0.9375		0.8824		16
+bird        	0.8125		1.0000		0.8966		13
+cat         	0.8333		0.7692		0.8000		13
+deer        	1.0000		0.9091		0.9524		11
+dog         	0.6000		0.8571		0.7059		7
+frog        	1.0000		0.4286		0.6000		7
+horse       	1.0000		0.9091		0.9524		11
+ship        	1.0000		1.0000		1.0000		4
+truck       	0.9091		0.8333		0.8696		12
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_111757:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct.npy
+Timestamp: unknown
+Total samples: 1
+Overall accuracy: 0.0000
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Frog (class 6):
+  Samples: 1
+  Accuracy: 0.0000
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.0000		0.0000		0.0000		0.0
+automobile  	0.0000		0.0000		0.0000		0.0
+bird        	0.0000		0.0000		0.0000		0.0
+cat         	0.0000		0.0000		0.0000		0.0
+deer        	0.0000		0.0000		0.0000		0.0
+dog         	0.0000		0.0000		0.0000		0.0
+frog        	0.0000		0.0000		0.0000		1.0
+horse       	0.0000		0.0000		0.0000		0.0
+ship        	0.0000		0.0000		0.0000		0.0
+truck       	0.0000		0.0000		0.0000		0.0
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp unknown:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_102052.npy
+Timestamp: 20250214_102052
+Total samples: 50
+Overall accuracy: 0.9000
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 4
+  Accuracy: 0.7500
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 6
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 8
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 8
+  Accuracy: 0.7500
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 5
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 2
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 5
+  Accuracy: 0.6000
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 5
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 1
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 6
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	1.0000		0.7500		0.8571		4
+automobile  	1.0000		1.0000		1.0000		6
+bird        	0.8889		1.0000		0.9412		8
+cat         	1.0000		0.7500		0.8571		8
+deer        	1.0000		1.0000		1.0000		5
+dog         	0.4000		1.0000		0.5714		2
+frog        	1.0000		0.6000		0.7500		5
+horse       	1.0000		1.0000		1.0000		5
+ship        	0.5000		1.0000		0.6667		1
+truck       	1.0000		1.0000		1.0000		6
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_102052:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_102700.npy
+Timestamp: 20250214_102700
+Total samples: 100
+Overall accuracy: 0.8900
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 6
+  Accuracy: 0.8333
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 16
+  Accuracy: 0.9375
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 13
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 13
+  Accuracy: 0.6923
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 11
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 7
+  Accuracy: 0.8571
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 7
+  Accuracy: 0.5714
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 11
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 4
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 12
+  Accuracy: 0.9167
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	1.0000		0.8333		0.9091		6
+automobile  	0.9375		0.9375		0.9375		16
+bird        	0.8125		1.0000		0.8966		13
+cat         	0.9000		0.6923		0.7826		13
+deer        	1.0000		1.0000		1.0000		11
+dog         	0.6000		0.8571		0.7059		7
+frog        	1.0000		0.5714		0.7273		7
+horse       	1.0000		1.0000		1.0000		11
+ship        	0.8000		1.0000		0.8889		4
+truck       	0.9167		0.9167		0.9167		12
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_102700:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_103313.npy
+Timestamp: 20250214_103313
+Total samples: 150
+Overall accuracy: 0.9000
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 9
+  Accuracy: 0.7778
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 24
+  Accuracy: 0.9583
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 19
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 16
+  Accuracy: 0.6875
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 14
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 10
+  Accuracy: 0.9000
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 14
+  Accuracy: 0.7143
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 15
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 9
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 20
+  Accuracy: 0.9000
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	1.0000		0.7778		0.8750		9
+automobile  	0.8846		0.9583		0.9200		24
+bird        	0.8261		1.0000		0.9048		19
+cat         	0.9167		0.6875		0.7857		16
+deer        	1.0000		1.0000		1.0000		14
+dog         	0.6429		0.9000		0.7500		10
+frog        	1.0000		0.7143		0.8333		14
+horse       	1.0000		1.0000		1.0000		15
+ship        	0.9000		1.0000		0.9474		9
+truck       	0.9474		0.9000		0.9231		20
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_103313:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_103926.npy
+Timestamp: 20250214_103926
+Total samples: 200
+Overall accuracy: 0.9000
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 14
+  Accuracy: 0.8571
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 28
+  Accuracy: 0.9643
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 22
+  Accuracy: 0.9545
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 21
+  Accuracy: 0.7143
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 19
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 19
+  Accuracy: 0.9474
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 18
+  Accuracy: 0.6667
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 21
+  Accuracy: 0.9524
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 15
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 23
+  Accuracy: 0.9130
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9231		0.8571		0.8889		14
+automobile  	0.8710		0.9643		0.9153		28
+bird        	0.8077		0.9545		0.8750		22
+cat         	0.9375		0.7143		0.8108		21
+deer        	1.0000		1.0000		1.0000		19
+dog         	0.7200		0.9474		0.8182		19
+frog        	1.0000		0.6667		0.8000		18
+horse       	1.0000		0.9524		0.9756		21
+ship        	0.9375		1.0000		0.9677		15
+truck       	0.9545		0.9130		0.9333		23
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_103926:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_104540.npy
+Timestamp: 20250214_104540
+Total samples: 250
+Overall accuracy: 0.8800
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 18
+  Accuracy: 0.8889
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 35
+  Accuracy: 0.9714
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 23
+  Accuracy: 0.9565
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 25
+  Accuracy: 0.7200
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 20
+  Accuracy: 0.9500
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 22
+  Accuracy: 0.9545
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 33
+  Accuracy: 0.5758
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 24
+  Accuracy: 0.9583
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 21
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 29
+  Accuracy: 0.9310
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9412		0.8889		0.9143		18
+automobile  	0.8947		0.9714		0.9315		35
+bird        	0.7097		0.9565		0.8148		23
+cat         	0.9000		0.7200		0.8000		25
+deer        	1.0000		0.9500		0.9744		20
+dog         	0.6774		0.9545		0.7925		22
+frog        	1.0000		0.5758		0.7308		33
+horse       	0.9583		0.9583		0.9583		24
+ship        	0.9130		1.0000		0.9545		21
+truck       	0.9643		0.9310		0.9474		29
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_104540:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_105155.npy
+Timestamp: 20250214_105155
+Total samples: 300
+Overall accuracy: 0.8800
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 23
+  Accuracy: 0.9130
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 42
+  Accuracy: 0.9762
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 27
+  Accuracy: 0.9630
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 30
+  Accuracy: 0.7000
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 26
+  Accuracy: 0.9231
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 26
+  Accuracy: 0.9615
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 36
+  Accuracy: 0.5833
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 28
+  Accuracy: 0.9643
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 26
+  Accuracy: 0.9615
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 36
+  Accuracy: 0.9167
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9130		0.9130		0.9130		23
+automobile  	0.8723		0.9762		0.9213		42
+bird        	0.7222		0.9630		0.8254		27
+cat         	0.9130		0.7000		0.7925		30
+deer        	1.0000		0.9231		0.9600		26
+dog         	0.6757		0.9615		0.7937		26
+frog        	1.0000		0.5833		0.7368		36
+horse       	0.9643		0.9643		0.9643		28
+ship        	0.9259		0.9615		0.9434		26
+truck       	0.9706		0.9167		0.9429		36
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_105155:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_105811.npy
+Timestamp: 20250214_105811
+Total samples: 350
+Overall accuracy: 0.8914
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 30
+  Accuracy: 0.9333
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 50
+  Accuracy: 0.9800
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 30
+  Accuracy: 0.9667
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 36
+  Accuracy: 0.7222
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 31
+  Accuracy: 0.9355
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 30
+  Accuracy: 0.9667
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 40
+  Accuracy: 0.6000
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 33
+  Accuracy: 0.9697
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 28
+  Accuracy: 0.9643
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 42
+  Accuracy: 0.9286
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9333		0.9333		0.9333		30
+automobile  	0.8909		0.9800		0.9333		50
+bird        	0.7436		0.9667		0.8406		30
+cat         	0.8966		0.7222		0.8000		36
+deer        	1.0000		0.9355		0.9667		31
+dog         	0.6905		0.9667		0.8056		30
+frog        	1.0000		0.6000		0.7500		40
+horse       	0.9697		0.9697		0.9697		33
+ship        	0.9310		0.9643		0.9474		28
+truck       	0.9750		0.9286		0.9512		42
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_105811:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_110423.npy
+Timestamp: 20250214_110423
+Total samples: 400
+Overall accuracy: 0.8925
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 35
+  Accuracy: 0.9429
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 56
+  Accuracy: 0.9821
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 33
+  Accuracy: 0.9697
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 41
+  Accuracy: 0.7317
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 38
+  Accuracy: 0.9474
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 33
+  Accuracy: 0.9697
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 46
+  Accuracy: 0.5870
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 40
+  Accuracy: 0.9500
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 32
+  Accuracy: 0.9688
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 46
+  Accuracy: 0.9348
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9429		0.9429		0.9429		35
+automobile  	0.9016		0.9821		0.9402		56
+bird        	0.7111		0.9697		0.8205		33
+cat         	0.8824		0.7317		0.8000		41
+deer        	0.9730		0.9474		0.9600		38
+dog         	0.7111		0.9697		0.8205		33
+frog        	1.0000		0.5870		0.7397		46
+horse       	0.9744		0.9500		0.9620		40
+ship        	0.9394		0.9688		0.9538		32
+truck       	0.9773		0.9348		0.9556		46
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_110423:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_111026.npy
+Timestamp: 20250214_111026
+Total samples: 450
+Overall accuracy: 0.8933
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 44
+  Accuracy: 0.9318
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 58
+  Accuracy: 0.9828
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 40
+  Accuracy: 0.9500
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 44
+  Accuracy: 0.7500
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 45
+  Accuracy: 0.9111
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 36
+  Accuracy: 0.9444
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 48
+  Accuracy: 0.6042
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 45
+  Accuracy: 0.9556
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 37
+  Accuracy: 0.9730
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 53
+  Accuracy: 0.9434
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9535		0.9318		0.9425		44
+automobile  	0.8906		0.9828		0.9344		58
+bird        	0.7451		0.9500		0.8352		40
+cat         	0.8684		0.7500		0.8049		44
+deer        	0.9762		0.9111		0.9425		45
+dog         	0.7234		0.9444		0.8193		36
+frog        	1.0000		0.6042		0.7532		48
+horse       	0.9348		0.9556		0.9451		45
+ship        	0.9231		0.9730		0.9474		37
+truck       	0.9804		0.9434		0.9615		53
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_111026:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-11B-Vision-Instruct_20250214_111638.npy
+Timestamp: 20250214_111638
+Total samples: 500
+Overall accuracy: 0.8960
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Airplane (class 0):
+  Samples: 51
+  Accuracy: 0.9216
+  Unparseable: 0 (0.00%)
+
+Automobile (class 1):
+  Samples: 65
+  Accuracy: 0.9846
+  Unparseable: 0 (0.00%)
+
+Bird (class 2):
+  Samples: 43
+  Accuracy: 0.9535
+  Unparseable: 0 (0.00%)
+
+Cat (class 3):
+  Samples: 47
+  Accuracy: 0.7660
+  Unparseable: 0 (0.00%)
+
+Deer (class 4):
+  Samples: 50
+  Accuracy: 0.9000
+  Unparseable: 0 (0.00%)
+
+Dog (class 5):
+  Samples: 40
+  Accuracy: 0.9500
+  Unparseable: 0 (0.00%)
+
+Frog (class 6):
+  Samples: 53
+  Accuracy: 0.6226
+  Unparseable: 0 (0.00%)
+
+Horse (class 7):
+  Samples: 50
+  Accuracy: 0.9400
+  Unparseable: 0 (0.00%)
+
+Ship (class 8):
+  Samples: 45
+  Accuracy: 0.9778
+  Unparseable: 0 (0.00%)
+
+Truck (class 9):
+  Samples: 56
+  Accuracy: 0.9464
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.9592		0.9216		0.9400		51
+automobile  	0.9014		0.9846		0.9412		65
+bird        	0.7455		0.9535		0.8367		43
+cat         	0.8780		0.7660		0.8182		47
+deer        	0.9783		0.9000		0.9375		50
+dog         	0.7170		0.9500		0.8172		40
+frog        	1.0000		0.6226		0.7674		53
+horse       	0.9400		0.9400		0.9400		50
+ship        	0.9362		0.9778		0.9565		45
+truck       	0.9636		0.9464		0.9550		56
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp 20250214_111638:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
+
+Analyzing: cifar10_training_iteration_Llama-3.2-90B-Vision-Instruct.npy
+Timestamp: unknown
+Total samples: 1
+Overall accuracy: 1.0000
+Unparseable predictions: 0 (0.00%)
+
+Per-class Statistics:
+
+Frog (class 6):
+  Samples: 1
+  Accuracy: 1.0000
+  Unparseable: 0 (0.00%)
+
+Detailed Metrics per Class:
+
+Class		Precision	Recall		F1 Score	Support
+----------------------------------------------------------------------
+airplane    	0.0000		0.0000		0.0000		0
+automobile  	0.0000		0.0000		0.0000		0
+bird        	0.0000		0.0000		0.0000		0
+cat         	0.0000		0.0000		0.0000		0
+deer        	0.0000		0.0000		0.0000		0
+dog         	0.0000		0.0000		0.0000		0
+frog        	1.0000		1.0000		1.0000		1
+horse       	0.0000		0.0000		0.0000		0
+ship        	0.0000		0.0000		0.0000		0
+truck       	0.0000		0.0000		0.0000		0
+
+Plots have been saved to the 'cifar10_analysis_plots' directory with timestamp unknown:
+1. confusion_matrix.png
+2. error_rates.png
+3. normalized_confusion_matrix.png
+4. accuracy_by_class.png
