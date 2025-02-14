@@ -3,50 +3,72 @@ import numpy as np
 import argparse
 import os
 
-def analyze_results(true_labels, predicted_labels):
+# Dataset specific configurations
+DATASET_CONFIGS = {
+    'mnist': {
+        'num_classes': 10,
+        'class_names': [str(i) for i in range(10)],
+        'name': 'MNIST'
+    },
+    'cifar10': {
+        'num_classes': 10,
+        'class_names': ['airplane', 'automobile', 'bird', 'cat', 'deer', 
+                       'dog', 'frog', 'horse', 'ship', 'truck'],
+        'name': 'CIFAR-10'
+    }
+}
+
+def infer_dataset(filepath):
+    """Infer dataset type from filepath."""
+    filepath = filepath.lower()
+    if 'mnist' in filepath:
+        return 'mnist'
+    elif 'cifar10' in filepath or 'cifar-10' in filepath:
+        return 'cifar10'
+    else:
+        raise ValueError("Could not infer dataset type from filepath. Please ensure 'mnist' or 'cifar10' is in the path.")
+
+def analyze_results(true_labels, predicted_labels, dataset_config):
     """Simple analysis of classification results."""
     
-    # sanity checks
-    # Find distinct values in each list
+    # Convert to numpy arrays of integers to handle type issues
+    true_labels = np.array(true_labels, dtype=int)
+    predicted_labels = np.array(predicted_labels, dtype=int)
+    
+    # Get dataset specific info
+    class_names = dataset_config['class_names']
+    dataset_name = dataset_config['name']
+    
+    # Sanity checks
     true_distinct = set(true_labels)
     predicted_distinct = set(predicted_labels)
-
-    # Print the distinct values
-    print("Distinct values in true_labels:", true_distinct)
-    print("Distinct values in predicted_labels:", predicted_distinct)
-
+    print(f"Distinct values in true_labels: {true_distinct}")
+    print(f"Distinct values in predicted_labels: {predicted_distinct}")
+    
     total_samples = len(true_labels)
-    print("total_samples: {}".format(total_samples))    
-    # Count unknown predictions (class 10)
+    print(f"total_samples: {total_samples}")
+    
     unknown_count = np.sum(predicted_labels == 10)
     unknown_percentage = (unknown_count / total_samples) * 100
-    print("unknown_count: {}, unknown_percentage: {}".format(unknown_count, unknown_percentage)) 
-    # Calculate accuracy excluding unknown predictions
+    print(f"unknown_count: {unknown_count}, unknown_percentage: {unknown_percentage}")
+    
     valid_mask = predicted_labels != 10
-    valid_predictions = predicted_labels[valid_mask]
-    valid_true = true_labels[valid_mask]
-    print("np.sum(valid_mask): {}".format(np.sum(valid_mask)))    
-    # Calculate accuracy excluding unknown predictions
-    valid_mask = predicted_labels != 10
+    print(f"np.sum(valid_mask): {np.sum(valid_mask)}")
+    
     if np.any(valid_mask):
         overall_accuracy = np.mean(predicted_labels[valid_mask] == true_labels[valid_mask])
     else:
         overall_accuracy = 0.0
 
-    #if len(valid_predictions) > 0:
-    #    overall_accuracy = np.mean(valid_predictions == valid_true)
-    #else:
-    #    overall_accuracy = 0.0
-
-    print("\nClassification Analysis")
+    print(f"\n{dataset_name} Classification Analysis")
     print("=" * 40)
     print(f"Total examples: {total_samples}")
     print(f"Unknown predictions (class 10): {unknown_count} ({unknown_percentage:.2f}%)")
     print(f"Overall accuracy (excluding unknown): {overall_accuracy:.4f}")
     
     print("\nPer-class Accuracy:")
-    print("-" * 40)
-    for i in range(10):  # Assuming 10 classes
+    print("-" * 60)
+    for i in range(10):
         class_mask = true_labels == i
         class_total = np.sum(class_mask)
         
@@ -60,15 +82,19 @@ def analyze_results(true_labels, predicted_labels):
             else:
                 class_acc = 0.0
                 
-            print(f"Class {i:>2}: {class_acc:.4f} (Unknown: {class_unknown}/{class_total})")
+            print(f"{class_names[i]:>12}: {class_acc:.4f} (Unknown: {class_unknown}/{class_total})")
 
 def main():
     parser = argparse.ArgumentParser(description='Analyze classification results.')
     parser.add_argument('--filepath', required=True, help='Path to the .npy results file')
     args = parser.parse_args()
     
-    results = np.load(os.path.expanduser(args.filepath), allow_pickle=True).item()
-    analyze_results(results['true_labels'], results['predicted_labels'])
+    filepath = os.path.expanduser(args.filepath)
+    dataset_type = infer_dataset(filepath)
+    dataset_config = DATASET_CONFIGS[dataset_type]
+    
+    results = np.load(filepath, allow_pickle=True).item()
+    analyze_results(results['true_labels'], results['predicted_labels'], dataset_config)
 
 if __name__ == "__main__":
     main()
