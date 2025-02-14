@@ -287,4 +287,6 @@ def main():
     parallel_process_dataset(test_dataset, model_id, hf_token, num_processes, 'testing', args.debug)
 
 if __name__ == "__main__":
-    main()
+    # Set start method to spawn
+    torch.multiprocessing.set_start_method('spawn', force=True)
+    main()    
