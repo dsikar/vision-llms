@@ -7,7 +7,7 @@ from transformers import MllamaForConditionalGeneration, AutoProcessor
 from huggingface_hub import login
 import re
 import argparse
-from torch.multiprocessing import Process, Manager, Queue, Lock, Value
+from torch.multiprocessing import Process, Manager, Queue, Lock, Value, set_start_method
 import time
 from datetime import datetime, timedelta
 
@@ -25,7 +25,7 @@ def setup_argparse():
     return parser.parse_args()
 
 class ProcessTracker:
-    def __init__(self, total_images, save_path, set_type):
+    def __init__(self, total_images, save_path, set_type, timestamp):
         self.manager = Manager()
         self.lock = Lock()
         self.processed_count = Value('i', 0)
@@ -34,6 +34,7 @@ class ProcessTracker:
         self.save_path = save_path
         self.set_type = set_type
         self.results_dict = self.manager.dict()
+        self.timestamp = timestamp
         
     def update_progress(self, idx, true_label, pred_label):
         with self.lock:
@@ -67,7 +68,7 @@ class ProcessTracker:
     
     def save_results(self):
         with self.lock:
-            # Convert manager dict to numpy arrays
+            # Sort indices and create aligned arrays
             indices = sorted(self.results_dict.keys())
             true_labels = []
             predicted_labels = []
@@ -77,17 +78,19 @@ class ProcessTracker:
                 true_labels.append(true_label)
                 predicted_labels.append(pred_label)
             
-            # Save to file with timestamp
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            # Save to file with consistent timestamp
             save_file = os.path.join(
                 self.save_path, 
-                f'mnist_{self.set_type}_iteration_Llama-3.2-11B-Vision-Instruct_{timestamp}.npy'
+                f'mnist_{self.set_type}_Llama-3.2-11B-Vision-Instruct_{self.timestamp}.npy'
             )
+            
+            # Save with complete information
             np.save(save_file, {
+                'indices': indices,
                 'true_labels': true_labels,
                 'predicted_labels': predicted_labels,
                 'processed_count': self.processed_count.value,
-                'timestamp': timestamp
+                'timestamp': self.timestamp
             })
 
 def extract_digit(response, debug=False):
@@ -169,6 +172,10 @@ def worker_process(process_id, image_queue, model_id, hf_token, tracker, debug=F
                     print(f"Response: {response}")
                     print(f"Predicted: {predicted_digit}\n")
                 
+                # Clear CUDA cache periodically
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                
             except Queue.Empty:
                 continue
             except Exception as e:
@@ -182,8 +189,12 @@ def parallel_process_dataset(dataset, model_id, hf_token, num_processes, set_typ
     """Process dataset using multiple processes."""
     total_images = len(dataset)
     
-    # Initialize progress tracker
-    tracker = ProcessTracker(total_images, RESULTS_PATH, set_type)
+    # Generate timestamp for this processing run
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"Starting processing with timestamp: {timestamp}")
+    
+    # Initialize progress tracker with timestamp
+    tracker = ProcessTracker(total_images, RESULTS_PATH, set_type, timestamp)
     
     # Create image queue
     image_queue = Queue(maxsize=num_processes * 2)
@@ -217,6 +228,9 @@ def parallel_process_dataset(dataset, model_id, hf_token, num_processes, set_typ
     print(f"\nCompleted processing {set_type} dataset!")
 
 def main():
+    # Set start method to spawn
+    set_start_method('spawn', force=True)
+    
     args = setup_argparse()
     
     # Create necessary directories
@@ -229,9 +243,9 @@ def main():
     if not hf_token:
         raise ValueError("Please set the HUGGINGFACE_API_KEY environment variable")
     
-    # Determine number of processes based on available GPUs or CPU cores
-    num_processes = torch.cuda.device_count() if torch.cuda.is_available() else os.cpu_count()
-    print(f"Using {num_processes} processes")
+    # Determine number of processes based on available GPUs
+    num_processes = torch.cuda.device_count()
+    print(f"Using {num_processes} GPUs")
     
     # Load datasets
     print("Loading MNIST datasets...")
