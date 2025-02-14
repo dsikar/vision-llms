@@ -118,8 +118,11 @@ def process_image(rank, image, label, model_id, hf_token, debug=False):
             torch.cuda.empty_cache()
         
         # Clean up
+        del inputs
+        del output
         del model
         del processor
+        torch.cuda.empty_cache()
         
         return predicted_class
         
@@ -129,17 +132,21 @@ def process_image(rank, image, label, model_id, hf_token, debug=False):
 
 def worker(rank, task_queue, result_queue, counter, total_images, model_id, hf_token, debug):
     """Worker process function."""
+    torch.cuda.set_device(rank)  # Set GPU device explicitly
     try:
         while True:
             task = task_queue.get()
             if task is None:
                 break
                 
-            idx, image, label = task
-            
-            predicted_class = process_image(rank, image, label, model_id, hf_token, debug)
-            result_queue.put((idx, label, predicted_class))
-            
+            with torch.cuda.device(rank):
+                idx, image, label = task
+                predicted_class = process_image(rank, image, label, model_id, hf_token, debug)
+                result_queue.put((idx, label, predicted_class))
+                
+                # Force garbage collection
+                torch.cuda.empty_cache()
+
             # Update counter
             with counter.get_lock():
                 counter.value += 1
@@ -152,28 +159,31 @@ def worker(rank, task_queue, result_queue, counter, total_images, model_id, hf_t
     except Exception as e:
         print(f"\nCritical error in worker {rank}: {str(e)}")
 
+BATCH_SIZE = 4  # Process images in smaller batches
+
 def main():
     args = setup_argparse()
-    
+    BATCH_SIZE = 4  # Process images in smaller batches
+
     # Create necessary directories
     for path in [CIFAR10_PATH, RESULTS_PATH, RAW_PATH]:
         os.makedirs(path, exist_ok=True)
-    
+
     # Get model ID and token
     model_id = "meta-llama/Llama-3.2-11B-Vision-Instruct"
     hf_token = os.getenv("HUGGINGFACE_API_KEY")
     if not hf_token:
         raise ValueError("Please set the HUGGINGFACE_API_KEY environment variable")
-    
+
     # Determine number of GPUs
     num_gpus = torch.cuda.device_count()
     print(f"Using {num_gpus} GPUs")
-    
+
     # Load datasets
     print("Loading CIFAR10 datasets...")
     train_dataset = datasets.CIFAR10(RAW_PATH, train=True, download=True)
-    test_dataset = datasets.MNIST(RAW_PATH, train=False, download=True)
-    
+    test_dataset = datasets.CIFAR10(RAW_PATH, train=False, download=True)  # Fixed MNIST to CIFAR10
+
     # Process datasets
     for dataset, set_type in [(train_dataset, 'training'), (test_dataset, 'testing')]:
         print(f"\nProcessing {set_type} dataset...")
@@ -181,12 +191,12 @@ def main():
         # Generate timestamp once for this dataset processing
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         print(f"Starting processing with timestamp: {timestamp}")
-        
+
         # Initialize multiprocessing components
         task_queue = Queue()
         result_queue = Queue()
         counter = Value('i', 0)
-        
+
         # Start worker processes
         processes = []
         for rank in range(num_gpus):
@@ -197,37 +207,54 @@ def main():
             )
             p.start()
             processes.append(p)
-        
-        # Add tasks to queue
-        for idx in range(len(dataset)):
-            image, label = dataset[idx]
-            task_queue.put((idx, image, label))
-        
-        # Add termination signals
-        for _ in range(num_gpus):
-            task_queue.put(None)
-        
-        # Collect results
+
+        # Process dataset in batches
         results = {}
         completed = 0
         total_images = len(dataset)
-        
-        while completed < total_images:
-            idx, label, pred = result_queue.get()
-            results[idx] = (label, pred)
-            completed += 1
+
+        # Add tasks to queue in batches
+        for i in range(0, total_images, BATCH_SIZE):
+            batch_end = min(i + BATCH_SIZE, total_images)
             
-            if completed % 50 == 0:
-                save_results(results, RESULTS_PATH, set_type, timestamp)
-        
+            # Add batch of tasks
+            for idx in range(i, batch_end):
+                image, label = dataset[idx]
+                task_queue.put((idx, image, label))
+
+            # Process current batch results
+            batch_size = batch_end - i
+            batch_completed = 0
+            
+            while batch_completed < batch_size:
+                idx, label, pred = result_queue.get()
+                results[idx] = (label, pred)
+                completed += 1
+                batch_completed += 1
+                
+                # Save intermediate results
+                if completed % 50 == 0:
+                    save_results(results, RESULTS_PATH, set_type, timestamp)
+                    print(f"\rProcessed: {completed}/{total_images} ({(completed/total_images)*100:.1f}%)", end="")
+
+            # Small delay between batches to allow memory cleanup
+            time.sleep(0.1)
+
+        # Add termination signals
+        for _ in range(num_gpus):
+            task_queue.put(None)
+
         # Wait for all processes to complete
         for p in processes:
             p.join()
-        
+
         # Save final results
         save_results(results, RESULTS_PATH, set_type, timestamp)
-        
         print(f"\nCompleted {set_type} dataset processing!")
+
+        # Force cleanup between datasets
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
 if __name__ == "__main__":
     # Set start method to spawn
