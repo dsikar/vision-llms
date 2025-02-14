@@ -50,27 +50,23 @@ def extract_class(response, debug=False):
             print(f"Error: {str(e)}")
         return 10
 
-def save_results(results_dict, save_path, set_type):
-    """Save results to file with timestamp."""
+def save_results(results_dict, save_path, set_type, timestamp):
+    """Save results to file with consistent timestamp and image indices."""
     indices = sorted(results_dict.keys())
-    true_labels = []
-    predicted_labels = []
     
-    for idx in indices:
-        true_label, pred_label = results_dict[idx]
-        true_labels.append(true_label)
-        predicted_labels.append(pred_label)
+    # Create arrays with matching indices
+    data = {
+        'indices': indices,
+        'true_labels': [results_dict[idx][0] for idx in indices],
+        'predicted_labels': [results_dict[idx][1] for idx in indices],
+        'timestamp': timestamp
+    }
     
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_file = os.path.join(
         save_path,
-        f'cifar10_{set_type}_iteration_Llama-3.2-11B-Vision-Instruct_{timestamp}.npy'
+        f'cifar10_{set_type}_Llama-3.2-11B-Vision-Instruct_{timestamp}.npy'
     )
-    np.save(save_file, {
-        'true_labels': true_labels,
-        'predicted_labels': predicted_labels,
-        'timestamp': timestamp
-    })
+    np.save(save_file, data)
 
 def process_image(rank, image, label, model_id, hf_token, debug=False):
     """Process a single image with the model."""
@@ -182,6 +178,10 @@ def main():
     for dataset, set_type in [(train_dataset, 'training'), (test_dataset, 'testing')]:
         print(f"\nProcessing {set_type} dataset...")
         
+        # Generate timestamp once for this dataset processing
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        print(f"Starting processing with timestamp: {timestamp}")
+        
         # Initialize multiprocessing components
         task_queue = Queue()
         result_queue = Queue()
@@ -218,14 +218,14 @@ def main():
             completed += 1
             
             if completed % 50 == 0:
-                save_results(results, RESULTS_PATH, set_type)
+                save_results(results, RESULTS_PATH, set_type, timestamp)
         
         # Wait for all processes to complete
         for p in processes:
             p.join()
         
         # Save final results
-        save_results(results, RESULTS_PATH, set_type)
+        save_results(results, RESULTS_PATH, set_type, timestamp)
         
         print(f"\nCompleted {set_type} dataset processing!")
 
