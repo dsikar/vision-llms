@@ -1,0 +1,38 @@
+Distinct values in true_labels: {np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9)}
+Distinct values in predicted_labels: {np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9), np.int64(10)}
+
+MNIST Classification Analysis
+============================================================
+Total examples: 1450
+Overall success rate: 87.10% (1263/1450)
+Prediction rate: 93.66% (1358/1450)
+Accuracy when predicted: 93.00% (1263/1358)
+Unknown predictions: 6.3% (92/1450)
+
+Per-class Statistics:
+------------------------------------------------------------
+           0: 94.1% overall (127/135), 94.8% when predicted (127/134), 0.7% unknown (1/135)
+           1: 89.0% overall (146/164), 90.1% when predicted (146/162), 1.2% unknown (2/164)
+           2: 83.8% overall (119/142), 83.8% when predicted (119/142), 0.0% unknown (0/142)
+           3: 96.4% overall (132/137), 99.2% when predicted (132/133), 2.9% unknown (4/137)
+           4: 96.8% overall (149/154), 98.0% when predicted (149/152), 1.3% unknown (2/154)
+           5: 92.4% overall (121/131), 94.5% when predicted (121/128), 2.3% unknown (3/131)
+           6: 79.4% overall (108/136), 96.4% when predicted (108/112), 17.6% unknown (24/136)
+           7: 71.7% overall (124/173), 96.9% when predicted (124/128), 26.0% unknown (45/173)
+           8: 87.6% overall (113/129), 89.0% when predicted (113/127), 1.6% unknown (2/129)
+           9: 83.2% overall (124/149), 88.6% when predicted (124/140), 6.0% unknown (9/149)
+
+Confusion Matrix (excluding unknown predictions):
+------------------------------------------------------------
+True\Pred |    0 |    1 |    2 |    3 |    4 |    5 |    6 |    7 |    8 |    9 |
+-------------------------------------------------------------------------------
+       0 |  127 |    0 |    0 |    1 |    0 |    0 |    3 |    0 |    2 |    1 |
+       1 |    0 |  146 |    0 |    1 |    0 |    0 |    1 |    9 |    2 |    3 |
+       2 |    2 |    2 |  119 |   11 |    1 |    0 |    1 |    4 |    1 |    1 |
+       3 |    0 |    0 |    0 |  132 |    0 |    0 |    0 |    0 |    0 |    1 |
+       4 |    0 |    1 |    0 |    0 |  149 |    0 |    0 |    2 |    0 |    0 |
+       5 |    0 |    0 |    1 |    1 |    0 |  121 |    1 |    1 |    3 |    0 |
+       6 |    0 |    1 |    1 |    0 |    2 |    0 |  108 |    0 |    0 |    0 |
+       7 |    0 |    2 |    0 |    1 |    1 |    0 |    0 |  124 |    0 |    0 |
+       8 |    1 |    0 |    0 |    1 |    1 |    2 |    8 |    0 |  113 |    1 |
+       9 |    0 |    1 |    0 |    0 |    9 |    0 |    0 |    6 |    0 |  124 |

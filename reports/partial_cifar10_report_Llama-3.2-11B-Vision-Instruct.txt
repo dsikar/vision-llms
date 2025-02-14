@@ -1,0 +1,38 @@
+Distinct values in true_labels: {np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9)}
+Distinct values in predicted_labels: {np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4), np.int64(5), np.int64(6), np.int64(7), np.int64(8), np.int64(9), np.int64(10)}
+
+CIFAR-10 Classification Analysis
+============================================================
+Total examples: 3400
+Overall success rate: 87.68% (2981/3400)
+Prediction rate: 99.97% (3399/3400)
+Accuracy when predicted: 87.70% (2981/3399)
+Unknown predictions: 0.0% (1/3400)
+
+Per-class Statistics:
+------------------------------------------------------------
+    airplane: 88.9% overall (305/343), 88.9% when predicted (305/343), 0.0% unknown (0/343)
+  automobile: 98.7% overall (314/318), 98.7% when predicted (314/318), 0.0% unknown (0/318)
+        bird: 94.5% overall (342/362), 94.5% when predicted (342/362), 0.0% unknown (0/362)
+         cat: 75.1% overall (247/329), 75.1% when predicted (247/329), 0.0% unknown (0/329)
+        deer: 90.5% overall (316/349), 90.8% when predicted (316/348), 0.3% unknown (1/349)
+         dog: 93.3% overall (308/330), 93.3% when predicted (308/330), 0.0% unknown (0/330)
+        frog: 61.2% overall (211/345), 61.2% when predicted (211/345), 0.0% unknown (0/345)
+       horse: 94.0% overall (313/333), 94.0% when predicted (313/333), 0.0% unknown (0/333)
+        ship: 94.8% overall (331/349), 94.8% when predicted (331/349), 0.0% unknown (0/349)
+       truck: 86.0% overall (294/342), 86.0% when predicted (294/342), 0.0% unknown (0/342)
+
+Confusion Matrix (excluding unknown predictions):
+------------------------------------------------------------
+True\Pred | airplane | automobile | bird |  cat | deer |  dog | frog | horse | ship | truck |
+-------------------------------------------------------------------------------
+airplane |  305 |   12 |   11 |    0 |    0 |    0 |    1 |    2 |   10 |    2 |
+automobile |    0 |  314 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |    4 |
+    bird |    0 |    5 |  342 |    0 |    6 |    6 |    0 |    0 |    3 |    0 |
+     cat |    2 |    7 |   23 |  247 |    1 |   42 |    0 |    5 |    2 |    0 |
+    deer |    1 |    1 |   13 |    0 |  316 |    9 |    0 |    8 |    0 |    0 |
+     dog |    1 |    2 |    7 |    9 |    0 |  308 |    0 |    3 |    0 |    0 |
+    frog |    0 |    5 |   58 |   32 |    5 |   26 |  211 |    5 |    3 |    0 |
+   horse |    2 |    1 |    4 |    0 |    5 |    7 |    0 |  313 |    1 |    0 |
+    ship |    6 |    9 |    1 |    1 |    0 |    0 |    0 |    0 |  331 |    1 |
+   truck |    0 |   47 |    0 |    0 |    0 |    1 |    0 |    0 |    0 |  294 |
