@@ -24,7 +24,7 @@
 #===============================================================================
 
 #SBATCH -D /users/aczd097/git/vLLM    # Working directory
-#SBATCH --job-name mn11pGPU # Job name 8 characters or less
+#SBATCH --job-name mn11pGP2 # Job name 8 characters or less
 #SBATCH --mail-type=ALL                 # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=daniel.sikar@city.ac.uk     # Where to send mail
 
@@ -83,7 +83,7 @@ mkdir -p outputs
 echo "Job started at $(date)"
 # python your_script.py --arg1 value1 --arg2 value2
 
-python describe_MNIST_parallel.py
+python describe_MNIST_parallel.py --resume-from /users/aczd097/archive/mnist/results/mnist_training_Llama-3.2-11B-Vision-Instruct_20250214_120425.npy
 #===============================================================================
 # Email Job Output and Calculate Duration
 #===============================================================================
