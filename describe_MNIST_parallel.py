@@ -21,7 +21,29 @@ RAW_PATH = os.path.join(MNIST_PATH, "raw")
 def setup_argparse():
     parser = argparse.ArgumentParser(description='MNIST Classification with Llama Vision')
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    parser.add_argument('--resume-from', type=str, help='Path to the saved results file to resume from')
     return parser.parse_args()
+
+def load_previous_results(filepath):
+    """Load previously saved results and determine the next index to process."""
+    try:
+        data = np.load(filepath, allow_pickle=True).item()
+        indices = data['indices']
+        true_labels = data['true_labels']
+        predicted_labels = data['predicted_labels']
+        
+        # Reconstruct results dictionary
+        results = {idx: (true, pred) for idx, true, pred in zip(indices, true_labels, predicted_labels)}
+        
+        # Find the last processed index
+        last_idx = max(indices) if indices else -1
+        next_idx = last_idx + 1
+        
+        print(f"Loaded {len(indices)} processed images. Resuming from image {next_idx + 1}")
+        return results, next_idx
+    except Exception as e:
+        print(f"Error loading previous results: {str(e)}")
+        return {}, 0
 
 def save_results(results_dict, save_path, set_type, timestamp):
     """Save results to file with consistent timestamp and image indices."""
@@ -133,8 +155,9 @@ def worker(rank, task_queue, result_queue, counter, total_images, model_id, hf_t
                 counter.value += 1
                 current_count = counter.value
                 
-            # Calculate progress
+            # Calculate progress (add offset for resumed processing)
             progress = (current_count / total_images) * 100
+            # Display 1-based index in output
             print(f"\rProcessed: {current_count}/{total_images} ({progress:.1f}%) - GPU {rank} - Last pred: {predicted_digit}", end="")
             
     except Exception as e:
@@ -166,14 +189,25 @@ def main():
     for dataset, set_type in [(train_dataset, 'training'), (test_dataset, 'testing')]:
         print(f"\nProcessing {set_type} dataset...")
         
-        # Generate timestamp once for this dataset processing
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        print(f"Starting processing with timestamp: {timestamp}")
+        # Initialize results and starting index
+        results = {}
+        start_idx = 0
+        
+        # If resuming, load previous results
+        if args.resume_from and set_type in args.resume_from:
+            results, start_idx = load_previous_results(args.resume_from)
+            # Use the original timestamp from the loaded file
+            timestamp = args.resume_from.split('_')[-2] + '_' + args.resume_from.split('_')[-1].split('.')[0]
+        else:
+            # Generate new timestamp for fresh start
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            print(f"Starting new processing with timestamp: {timestamp}")
         
         # Initialize multiprocessing components
         task_queue = Queue()
         result_queue = Queue()
-        counter = Value('i', 0)
+        # Initialize counter with number of already processed images
+        counter = Value('i', len(results))
         
         # Start worker processes
         processes = []
@@ -186,8 +220,8 @@ def main():
             p.start()
             processes.append(p)
         
-        # Add tasks to queue
-        for idx in range(len(dataset)):
+        # Add remaining tasks to queue
+        for idx in range(start_idx, len(dataset)):
             image, label = dataset[idx]
             task_queue.put((idx, image, label))
         
@@ -196,16 +230,15 @@ def main():
             task_queue.put(None)
         
         # Collect results
-        results = {}
+        remaining_images = len(dataset) - start_idx
         completed = 0
-        total_images = len(dataset)
         
-        while completed < total_images:
+        while completed < remaining_images:
             idx, label, pred = result_queue.get()
             results[idx] = (label, pred)
             completed += 1
             
-            if completed % 50 == 0:
+            if (len(results) % 50) == 0:
                 save_results(results, RESULTS_PATH, set_type, timestamp)
         
         # Wait for all processes to complete
@@ -221,3 +254,7 @@ if __name__ == "__main__":
     # Set start method to spawn
     set_start_method('spawn', force=True)
     main()
+    """
+    Parallel processing of MNIST dataset with Llama Vision model with resume functionality.
+    python script.py --resume-from /users/aczd097/archive/mnist/results/mnist_training_Llama-3.2-11B-Vision-Instruct_20250214_120425.npy
+    """
