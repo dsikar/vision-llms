@@ -27,7 +27,29 @@ CIFAR10_CLASSES = {
 def setup_argparse():
     parser = argparse.ArgumentParser(description='CIFAR10 Classification with Llama Vision')
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    parser.add_argument('--resume-from', type=str, help='Path to the saved results file to resume from')
     return parser.parse_args()
+
+def load_previous_results(filepath):
+    """Load previously saved results and determine the next index to process."""
+    try:
+        data = np.load(filepath, allow_pickle=True).item()
+        indices = data['indices']
+        true_labels = data['true_labels']
+        predicted_labels = data['predicted_labels']
+        
+        # Reconstruct results dictionary
+        results = {idx: (true, pred) for idx, true, pred in zip(indices, true_labels, predicted_labels)}
+        
+        # Find the last processed index
+        last_idx = max(indices) if indices else -1
+        next_idx = last_idx + 1
+        
+        print(f"Loaded {len(indices)} processed images. Resuming from image {next_idx + 1}")
+        return results, next_idx
+    except Exception as e:
+        print(f"Error loading previous results: {str(e)}")
+        return {}, 0
 
 def extract_class(response, debug=False):
     try:
@@ -163,7 +185,6 @@ BATCH_SIZE = 4  # Process images in smaller batches
 
 def main():
     args = setup_argparse()
-    BATCH_SIZE = 4  # Process images in smaller batches
 
     # Create necessary directories
     for path in [CIFAR10_PATH, RESULTS_PATH, RAW_PATH]:
@@ -182,20 +203,31 @@ def main():
     # Load datasets
     print("Loading CIFAR10 datasets...")
     train_dataset = datasets.CIFAR10(RAW_PATH, train=True, download=True)
-    test_dataset = datasets.CIFAR10(RAW_PATH, train=False, download=True)  # Fixed MNIST to CIFAR10
+    test_dataset = datasets.CIFAR10(RAW_PATH, train=False, download=True)
 
     # Process datasets
     for dataset, set_type in [(train_dataset, 'training'), (test_dataset, 'testing')]:
         print(f"\nProcessing {set_type} dataset...")
         
-        # Generate timestamp once for this dataset processing
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        print(f"Starting processing with timestamp: {timestamp}")
+        # Initialize results and starting index
+        results = {}
+        start_idx = 0
+        
+        # If resuming, load previous results
+        if args.resume_from and set_type in args.resume_from:
+            results, start_idx = load_previous_results(args.resume_from)
+            # Use the original timestamp from the loaded file
+            timestamp = args.resume_from.split('_')[-2] + '_' + args.resume_from.split('_')[-1].split('.')[0]
+            print(f"Resuming processing with timestamp: {timestamp}")
+        else:
+            # Generate new timestamp for fresh start
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            print(f"Starting new processing with timestamp: {timestamp}")
 
         # Initialize multiprocessing components
         task_queue = Queue()
         result_queue = Queue()
-        counter = Value('i', 0)
+        counter = Value('i', len(results))  # Initialize with number of processed images
 
         # Start worker processes
         processes = []
@@ -208,13 +240,12 @@ def main():
             p.start()
             processes.append(p)
 
-        # Process dataset in batches
-        results = {}
-        completed = 0
+        # Process remaining dataset in batches
+        completed = len(results)  # Track completed images including loaded results
         total_images = len(dataset)
 
-        # Add tasks to queue in batches
-        for i in range(0, total_images, BATCH_SIZE):
+        # Add remaining tasks to queue in batches
+        for i in range(start_idx, total_images, BATCH_SIZE):
             batch_end = min(i + BATCH_SIZE, total_images)
             
             # Add batch of tasks
@@ -232,10 +263,10 @@ def main():
                 completed += 1
                 batch_completed += 1
                 
-                # Save intermediate results
+                # Save intermediate results every 50 images
                 if completed % 50 == 0:
                     save_results(results, RESULTS_PATH, set_type, timestamp)
-                    print(f"\rProcessed: {completed}/{total_images} ({(completed/total_images)*100:.1f}%)", end="")
+                    print(f"\nSaved results at {completed} images")
 
             # Small delay between batches to allow memory cleanup
             time.sleep(0.1)
@@ -260,3 +291,7 @@ if __name__ == "__main__":
     # Set start method to spawn
     set_start_method('spawn', force=True)
     main()
+    """
+    Resume from:
+    python script.py --resume-from /users/aczd097/archive/cifar10/results/cifar10_training_Llama-3.2-11B-Vision-Instruct_TIMESTAMP.npy
+    """
