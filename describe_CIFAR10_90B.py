@@ -7,6 +7,7 @@ from transformers import MllamaForConditionalGeneration, AutoProcessor
 from huggingface_hub import login
 import re
 import argparse
+from datetime import datetime
 
 # Path configurations
 BASE_PATH = "/users/aczd097"
@@ -36,6 +37,7 @@ def setup_argparse():
     """Setup command line arguments."""
     parser = argparse.ArgumentParser(description='CIFAR10 Classification with Llama Vision')
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    parser.add_argument('--resume-from', type=str, help='Path to the saved results file to resume from')
     return parser.parse_args()
 
 def setup_model():
@@ -88,7 +90,30 @@ def extract_class(response, debug=False):
             print(f"Error: {str(e)}")
         return 10
 
-from datetime import datetime
+def load_previous_results(filepath):
+    """Load previously saved results and determine the next index to process."""
+    try:
+        data = np.load(filepath, allow_pickle=True).item()
+        indices = data['indices']
+        true_labels = data['true_labels']
+        predicted_labels = data['predicted_labels']
+        timestamp = data.get('timestamp', datetime.now().strftime("%Y%m%d_%H%M%S"))
+        
+        # Reconstruct results dictionary
+        results = {
+            'true_labels': true_labels,
+            'predicted_labels': predicted_labels
+        }
+        
+        # Find the last processed index
+        last_idx = max(indices) if indices else -1
+        next_idx = last_idx + 1
+        
+        print(f"Loaded {len(indices)} processed images. Resuming from image {next_idx}")
+        return results, next_idx, timestamp
+    except Exception as e:
+        print(f"Error loading previous results: {str(e)}")
+        return {'true_labels': [], 'predicted_labels': []}, 0, datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def save_results(results_dict, save_path, set_type, timestamp):
     """Save results to file with consistent timestamp."""
@@ -107,23 +132,25 @@ def save_results(results_dict, save_path, set_type, timestamp):
     )
     np.save(save_file, data)
 
-def process_dataset(dataset, model, processor, set_type, timestamp, debug=False):
-    """Process either training or testing dataset."""
-    results = {
-        'true_labels': [],
-        'predicted_labels': []
-    }
+def process_dataset(dataset, model, processor, set_type, timestamp, start_idx=0, results=None, debug=False):
+    """Process either training or testing dataset with resume capability."""
+    if results is None:
+        results = {
+            'true_labels': [],
+            'predicted_labels': []
+        }
     
     total_images = len(dataset)
     print(f"Processing {set_type} dataset ({total_images} images)...")
+    print(f"Starting from index {start_idx} with {len(results['true_labels'])} already processed images")
     
     # Create prompt with class options
     class_options = ", ".join(CIFAR10_CLASSES.keys())
     prompt = f"What object is shown in this image? Choose one from these options: {class_options}. Respond with only the class name."
     
-    for idx in range(total_images):
+    for idx in range(start_idx, total_images):
         if idx % 100 == 0 and not debug:
-            print(f"Processing image {idx}/{total_images}")
+            print(f"Processing image {idx}/{total_images} ({idx/total_images*100:.1f}%)")
             
         image, label = dataset[idx]
         # Convert PIL image to RGB
@@ -169,7 +196,7 @@ def process_dataset(dataset, model, processor, set_type, timestamp, debug=False)
             results['predicted_labels'].append(10)
             
         # Save results periodically
-        if idx % 1000 == 0:
+        if (idx - start_idx + 1) % 1000 == 0 or idx == total_images - 1:
             save_results(results, RESULTS_PATH, f"{set_type}_iteration", timestamp)
     
     # Save final results
@@ -195,20 +222,36 @@ def main():
     if args.debug:
         print("Running in debug mode - will show detailed output for each prediction")
     
-    # Generate timestamp for this run
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    print(f"Starting processing with timestamp: {timestamp}")
-    
-    # Process training dataset
-    train_true, train_pred = process_dataset(train_dataset, model, processor, 'training', timestamp, args.debug)
-    
-    # Process testing dataset
-    test_true, test_pred = process_dataset(test_dataset, model, processor, 'testing', timestamp, args.debug)
-    
-    # Print basic statistics
-    print("\nProcessing complete!")
-    print(f"Training accuracy: {sum(np.array(train_true) == np.array(train_pred)) / len(train_true):.4f}")
-    print(f"Testing accuracy: {sum(np.array(test_true) == np.array(test_pred)) / len(test_true):.4f}")
+    # Process each dataset
+    for dataset, set_type in [(train_dataset, 'training'), (test_dataset, 'testing')]:
+        # Initialize results and starting index
+        results = None
+        start_idx = 0
+        
+        # If resuming, load previous results
+        if args.resume_from and set_type in args.resume_from:
+            results, start_idx, timestamp = load_previous_results(args.resume_from)
+            print(f"Resuming {set_type} dataset from index {start_idx} with timestamp {timestamp}")
+        else:
+            # Generate new timestamp for fresh start
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            print(f"Starting new processing with timestamp: {timestamp}")
+        
+        # Process dataset
+        true_labels, pred_labels = process_dataset(
+            dataset, model, processor, set_type, timestamp,
+            start_idx=start_idx, results=results, debug=args.debug
+        )
+        
+        # Print basic statistics
+        accuracy = sum(np.array(true_labels) == np.array(pred_labels)) / len(true_labels)
+        print(f"\n{set_type.capitalize()} dataset complete!")
+        print(f"{set_type.capitalize()} accuracy: {accuracy:.4f}")
 
 if __name__ == "__main__":
     main()
+    """
+    CIFAR10 Classification with resume functionality.
+    Example usage:
+    python describe_CIFAR10_90B.py --resume-from /users/aczd097/archive/cifar10/results/cifar10_training_Llama-3.2-90B-Vision-Instruct_20250215_120000.npy
+    """
