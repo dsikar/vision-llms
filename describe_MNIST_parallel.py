@@ -10,7 +10,7 @@ import argparse
 from torch.multiprocessing import Process, Queue, Value, set_start_method
 import time
 from datetime import datetime, timedelta
-
+# todo resize images 560x560
 # Path configurations
 BASE_PATH = "/users/aczd097"
 ARCHIVE_PATH = os.path.join(BASE_PATH, "archive")
