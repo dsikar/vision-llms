@@ -7,7 +7,7 @@ from transformers import MllamaForConditionalGeneration, AutoProcessor
 from huggingface_hub import login
 import re
 import argparse
-
+# TODO, increase images to 720x720px
 # Path configurations
 BASE_PATH = "/users/aczd097"
 ARCHIVE_PATH = os.path.join(BASE_PATH, "archive")
